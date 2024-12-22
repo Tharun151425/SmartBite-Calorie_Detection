@@ -96,5 +96,3 @@ urllib3==2.2.3
 watchdog==5.0.3
 websockets==13.1
 yarl==1.17.1
-freeglut3-dev
-libgtk2.0-dev
