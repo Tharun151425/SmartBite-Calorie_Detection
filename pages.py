@@ -39,7 +39,7 @@ def create_metric_card(title, value, prefix="", suffix=""):
 
 def home_page():
     # Sidebar for settings
-    st.sidebar.title(f"Welcome, User")#TODO: Add user name
+    st.sidebar.title(f"Welcome, {st.session_state['user_email']}!")
     with st.sidebar:
         st.markdown("<h2 >⚙️ Controls</h2>", unsafe_allow_html=True)
         st.session_state.daily_goal = st.slider(
