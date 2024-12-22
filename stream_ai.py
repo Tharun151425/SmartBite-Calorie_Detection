@@ -154,9 +154,12 @@ def main():
         st.session_state['logged_in'] = False
     if 'page' not in st.session_state:
         st.session_state['page'] = 'login'
+        login_page(supabase,cookie_deleter)
+        st.rerun()
 
     # Check for persistent login cookie
-    user_token = cookie_deleter.get('user_token')
+    user_token = cookie_deleter.get(cookie_key)
+    st.write(cookie_deleter)
     st.markdown(user_token)
     st.write(st.session_state)
     
@@ -172,7 +175,7 @@ def main():
         except Exception:
             st.session_state['logged_in'] = False
             # cookie_setter.remove('user_token')
-            cookie_deleter.delete('user_token')
+            cookie_deleter.delete(cookie_key)
 
     # Routing
     if not st.session_state['logged_in']:

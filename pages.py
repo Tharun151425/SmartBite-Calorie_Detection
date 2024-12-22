@@ -65,9 +65,12 @@ def home_page():
     if st.sidebar.button("Logout"):
             st.session_state['logged_in'] = False
             st.session_state['page'] = 'login'
-            cookie_deleter.delete('user_token')
+            st.session_state['user_id'] = None
+            st.session_state['user_email'] = None
+
+            cookie_deleter.delete(cookie_key)
             # cookie_setter.remove('user_token')
-            cookie_deleter.delete('user_token')
+            cookie_deleter.delete(cookie_key)
             st.rerun()
 
     # Main content

@@ -44,7 +44,7 @@ def login_page(supabase: Client,  cookie_deleter: stx.CookieManager):
                 if response.user:
                     # Set a persistent login cookie
                     # cookie_setter.set("user_token",response.session.access_token,expires=datetime.datetime.now() + datetime.timedelta(days=7))
-                    cookie_deleter.set("user_token",response.session.access_token)
+                    cookie_deleter.set(cookie_key,response.session.access_token)
                     
                     st.session_state['user_id'] = response.user.id
                     st.session_state['user_email'] = response.user.email
