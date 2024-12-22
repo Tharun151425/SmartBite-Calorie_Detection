@@ -20,9 +20,9 @@ import extra_streamlit_components as stx
 # Cookie manager for session handling
 def get_cookie_manager():
     """Initialize and return a cookie manager with a unique key"""
-    return stx.CookieManager()
+    return stx.CookieManager(key=os.urandom(32))
 
-cookie_setter = CookieController(key="user_token")
+cookie_setter = CookieController(key=os.urandom(32))
 cookie_deleter= get_cookie_manager()
 
 
