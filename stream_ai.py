@@ -12,10 +12,22 @@ import os
 from ai_model import food_detect
 from dotenv import load_dotenv
 from supabase import create_client, Client
-from auth import login_page, signup_page
+from auth import login_page, signup_page,cookie_deleter#,cookie_setter
 from streamlit_cookies_controller import CookieController
 import extra_streamlit_components as stx
-from pages import home_page,cookie_deleter,cookie_setter
+from pages import home_page 
+from globals import cookie_key
+
+
+
+# # Cookie manager for session handling
+# def get_cookie_manager():
+#     """Initialize and return a cookie manager with a unique key"""
+#     return stx.CookieManager(key=cookie_key)
+
+# if cookie_key!=st.session_state['key']:
+#     cookie_setter = CookieController(key=cookie_key)
+#     cookie_deleter= get_cookie_manager()
 
 
 #  page configuration
@@ -112,7 +124,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# @st.cache_data()
+
+
 
 
 # Initialize session state
@@ -132,7 +145,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 def main():
     load_dotenv()
     supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
@@ -144,7 +156,9 @@ def main():
         st.session_state['page'] = 'login'
 
     # Check for persistent login cookie
-    user_token = cookie_setter.get('user_token')
+    user_token = cookie_deleter.get('user_token')
+    st.markdown(user_token)
+    st.write(st.session_state)
     
     if user_token:
         try:
@@ -157,13 +171,13 @@ def main():
                 st.session_state['logged_in'] = False
         except Exception:
             st.session_state['logged_in'] = False
-            cookie_setter.remove('user_token')
+            # cookie_setter.remove('user_token')
             cookie_deleter.delete('user_token')
 
     # Routing
     if not st.session_state['logged_in']:
         if st.session_state['page'] == 'login':
-            login_page(supabase, cookie_setter,cookie_deleter)  # Pass single cookie manager
+            login_page(supabase,cookie_deleter)  # Pass single cookie manager
         elif st.session_state['page'] == 'signup':
             signup_page(supabase)
     else:

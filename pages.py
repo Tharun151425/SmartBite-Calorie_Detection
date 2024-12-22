@@ -15,15 +15,21 @@ from supabase import create_client, Client
 from auth import login_page, signup_page
 from streamlit_cookies_controller import CookieController
 import extra_streamlit_components as stx
+from globals import cookie_key
+from auth import cookie_deleter#,cookie_setter
 
 
-# Cookie manager for session handling
-def get_cookie_manager():
-    """Initialize and return a cookie manager with a unique key"""
-    return stx.CookieManager(key=os.urandom(32).hex())
 
-cookie_setter = CookieController(key=os.urandom(32).hex())
-cookie_deleter= get_cookie_manager()
+
+# # Cookie manager for session handling
+# def get_cookie_manager():
+#     """Initialize and return a cookie manager with a unique key"""
+#     return stx.CookieManager(key=cookie_key)
+
+# if cookie_key!=st.session_state['key']:
+
+#     cookie_setter = CookieController(key=cookie_key)
+#     cookie_deleter= get_cookie_manager()
 
 
 
@@ -60,7 +66,7 @@ def home_page():
             st.session_state['logged_in'] = False
             st.session_state['page'] = 'login'
             cookie_deleter.delete('user_token')
-            cookie_setter.remove('user_token')
+            # cookie_setter.remove('user_token')
             cookie_deleter.delete('user_token')
             st.rerun()
 

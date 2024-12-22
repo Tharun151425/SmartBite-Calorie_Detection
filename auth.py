@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 import datetime
 import extra_streamlit_components as stx
+from streamlit_cookies_controller import CookieController
+from globals import cookie_key
 
 load_dotenv()
 
@@ -13,7 +15,17 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def login_page(supabase: Client, cookie_setter: stx.CookieManager, cookie_deleter: stx.CookieManager):
+st.session_state['key']=None
+
+# Cookie manager for session handling
+def get_cookie_manager():
+    """Initialize and return a cookie manager with a unique key"""
+    return stx.CookieManager(key=cookie_key)
+# cookie_setter = CookieController(key=cookie_key)
+cookie_deleter= get_cookie_manager()
+
+
+def login_page(supabase: Client,  cookie_deleter: stx.CookieManager):
     
     col1,col2,col3=st.columns([0.15,0.60,0.15])
 
@@ -31,7 +43,7 @@ def login_page(supabase: Client, cookie_setter: stx.CookieManager, cookie_delete
                 
                 if response.user:
                     # Set a persistent login cookie
-                    cookie_setter.set("user_token",response.session.access_token,expires=datetime.datetime.now() + datetime.timedelta(days=7))
+                    # cookie_setter.set("user_token",response.session.access_token,expires=datetime.datetime.now() + datetime.timedelta(days=7))
                     cookie_deleter.set("user_token",response.session.access_token)
                     
                     st.session_state['user_id'] = response.user.id
