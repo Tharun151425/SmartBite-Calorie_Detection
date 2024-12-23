@@ -535,9 +535,9 @@ def main():
 
     # Check for persistent login cookie
     user_token = cookie_deleter.get("login")
-    st.write(cookie_deleter)
-    st.markdown(user_token)
-    st.write(st.session_state)
+    #st.write(cookie_deleter)
+    #st.markdown(user_token)
+    #st.write(st.session_state)
     
     
     if user_token:
