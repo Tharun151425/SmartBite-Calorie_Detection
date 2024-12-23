@@ -12,7 +12,6 @@ import os
 from ai_model import food_detect
 from dotenv import load_dotenv
 from supabase import create_client, Client
-from streamlit_cookies_controller import CookieController
 import extra_streamlit_components as stx
 
 
@@ -34,12 +33,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Cookie manager for session handling
-def get_cookie_manager():
-    """Initialize and return a cookie manager with a unique key"""
-    return stx.CookieManager(key="login")
-cookie_setter = CookieController(key="login")
-cookie_deleter= get_cookie_manager()
+
 
 
 
@@ -144,7 +138,7 @@ st.markdown("""
 
 
 
-def login_page(supabase: Client,  cookie_deleter: stx.CookieManager):
+def login_page(supabase: Client):
     
     col1,col2,col3=st.columns([0.15,0.60,0.15])
 
@@ -161,9 +155,6 @@ def login_page(supabase: Client,  cookie_deleter: stx.CookieManager):
                 response = supabase.auth.sign_in_with_password({"email": email, "password": password})
                 
                 if response.user:
-                    # Set a persistent login cookie
-                    cookie_setter.set("login",response.session.access_token,expires=(datetime.now() + timedelta(days=7)))
-                    cookie_deleter.set("login",response.session.access_token)
                     
                     st.session_state['user_id'] = response.user.id
                     st.session_state['user_email'] = response.user.email
@@ -270,9 +261,6 @@ def home_page():
             # st.session_state['user_email'] = None
             st.session_state.clear()
             
-            cookie_deleter.delete("login")
-            cookie_setter.remove('user_token')
-            cookie_deleter.delete("login")
             st.rerun()
 
     # Main content
@@ -533,10 +521,8 @@ def main():
     if 'page' not in st.session_state:
         st.session_state['page'] = 'login'
 
-    # Check for persistent login cookie
-    user_token = cookie_deleter.get("login")
-    st.write(cookie_deleter)
-    st.markdown(user_token)
+    
+    user_token = None
     st.write(st.session_state)
     
     
@@ -552,14 +538,13 @@ def main():
                 st.session_state['logged_in'] = False
         except Exception:
             st.session_state['logged_in'] = False
-            cookie_setter.remove('user_token')
-            cookie_deleter.delete("login")
+            
             
 
     # Routing
     if not st.session_state['logged_in']:
         if st.session_state['page'] == 'login':
-            login_page(supabase,cookie_deleter)  # Pass single cookie manager
+            login_page(supabase)  
         elif st.session_state['page'] == 'signup':
             signup_page(supabase)
     else:
