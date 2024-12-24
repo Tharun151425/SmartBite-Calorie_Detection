@@ -38,8 +38,15 @@ def food_detect(input_image_path):
                 "food_name": model.names[int(box.cls)],  # Class name
                 "confidence": float(box.conf)            # Confidence score
             }
-            detected_foods.append(food_info)
 
+            if len(detected_foods) == 0:
+                detected_foods.append(food_info)
+
+            temp1 = [i.get("food_name") for i in detected_foods]
+            if food_info["food_name"] not in temp1:
+                detected_foods += [food_info]
+            
+    print(detected_foods)
     # Convert the detected foods to JSON format
     json_output = json.dumps(detected_foods, indent=4)
 
