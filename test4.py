@@ -375,23 +375,23 @@ def home_page():
         for food in latest['foods']:
             confidence_color = f"rgb({int(255*(1-food['confidence']))}, {int(255*food['confidence'])}, 0)"
             st.markdown(f"""
-    <div style="padding: 10px; margin: 5px 0; background: rgba(0,255,136,0.1); border-radius: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #00ff88;">{food['food']}</span>
-            <select id="{food['food']}_unit" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                <option value="servings">Servings</option>
-                <option value="grams">Grams</option>
-                <option value="pieces">Pieces</option>
-            </select>
-            <input type="number" id="{food['food']}_quantity" style="margin-left: 10px;" />
-            <input type="checkbox" id="{food['food']}_checkbox" style="margin-left: 10px;" />
-    </div>
-        <div style="color: #00ccff; font-size: 0.9em;">
-            {food['calories']} kcal per {food['portion']}
-        </div>
-            <div style="color: {confidence_color};">{int(food['confidence']*100)}% confident</div>
-    </div>
-""", unsafe_allow_html=True)
+                <div style="padding: 10px; margin: 5px 0; background: rgba(0,255,136,0.1); border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #00ff88;">{food['food']}</span>
+                        <select id="{food['food']}_unit" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            <option value="servings">Servings</option>
+                            <option value="grams">Grams</option>
+                            <option value="pieces">Pieces</option>
+                        </select>
+                        <input type="number" id="{food['food']}_quantity" style="margin-left: 10px;" />
+                        <input type="checkbox" id="{food['food']}_checkbox" style="margin-left: 10px;" />
+                </div>
+                    <div style="color: #00ccff; font-size: 0.9em;">
+                        {food['calories']} kcal per {food['portion']}
+                    </div>
+                        <div style="color: {confidence_color};">{int(food['confidence']*100)}% confident</div>
+                </div>
+        """, unsafe_allow_html=True)
         if st.button("📥 Save Meal", key="save_meal"):
             try:
                 # Ensure the user is logged in and has a valid user_id
@@ -510,13 +510,38 @@ def home_page():
         
         with vis_cols[1]:
             # Calorie Distribution Pie Chart
-            if st.session_state.history:
+
+
+            def fetch_meal_history_last_24_hours(user_id):
+                last_24_hours = datetime.now() - timedelta(days=1)
+                result = (
+                    supabase.table("Meals")
+                    .select("timestamp,foods_detected,meal_cal")
+                    .eq("user_id", user_id)
+                    .gte("timestamp", last_24_hours.isoformat())  # Filter for the last 24 hours
+                    .order("timestamp", desc=True)  # Order by latest first
+                    .execute()
+                )
+                return result.data
+    
+
+
+            meal_history = fetch_meal_history_last_24_hours(st.session_state['user_id'])
+            food_chart=[foods["foods_detected"] for foods in meal_history]
+
+
+            if food_chart:
                 labels = []
                 values = []
-                for latest in st.session_state.history:
-                    for food in latest["foods"]:
-                        labels.append(food["food"])
-                        values.append(food["calories"])
+                for sublist in food_chart:
+                    for item in sublist:
+                        # Split each item by the colon to separate the food name and calorie count
+                        food_name, calorie_str = item.split(':')
+                        # Remove the 'kcal' part and convert the calorie value to an integer
+                        calories = int(calorie_str.replace('kcal', ''))
+                        # Append the food name and calorie value to the respective lists
+                        labels.append(food_name)
+                        values.append(calories)
 
 
                 # latest = st.session_state.history
