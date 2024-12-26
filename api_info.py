@@ -72,26 +72,6 @@ def new_meal_insert(supabase:Client,user_id, today_date, meal_cal, foods_detecte
 
         print(f"Response from Meals insert: {response}")
 
-        # Update cal_consumed in Daily
-        if response: # Ensure Meals insert succeeded
-            daily_data = (
-                supabase.table("Daily")
-                .select("cal_consumed")
-                .eq("user_id", user_id)
-                .eq("date", today_date)
-                .execute()
-            )
-            
-            if daily_data.data:
-                current_calories = daily_data.data[0]["cal_consumed"]
-                updated_calories = current_calories + meal_cal
-                
-                # Update cal_consumed in Daily table
-                supabase.table("Daily").update({
-                    "cal_consumed": updated_calories
-                }).eq("user_id", user_id).eq("date", todays_date()).execute()
-            else:
-                raise ValueError("Failed to fetch current cal_consumed from Daily table.")
     except Exception as e:
         raise ValueError(f"Error inserting new meal: {str(e)}")
 
@@ -120,9 +100,8 @@ def get_latest_daily_data(supabase:Client,user_id):
         .execute()
     )
     if result.data:
-        return result.data[0]  # Return the first record (there should only be one)
+        return result.data[0] 
     else:
-        # If no record for today, return default data
         return {
             "cal_consumed": 0,
             "cal_burnt": 0,
