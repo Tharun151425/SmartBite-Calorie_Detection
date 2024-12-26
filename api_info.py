@@ -3,13 +3,8 @@ from datetime import datetime, timezone
 import pytz
 import os
 from dotenv import load_dotenv
-from supabase import create_client, Client
+from supabase import Client
 
-load_dotenv()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def timestampz():
     ist = pytz.timezone("Asia/Kolkata")
@@ -19,14 +14,14 @@ def todays_date():
     return datetime.today().strftime("%Y-%m-%d")
 
 
-def get_data(table_name: str) -> list:
+def get_data(supabase:Client,table_name: str) -> list:
     try:
         response = supabase.table(table_name).select("*").execute()
         return response
     except Exception as e:
         raise ValueError(f"Error fetching data from {table_name}: {str(e)}")
 
-def get_cal_consumed(user_id: str, today_date: str) -> int:
+def get_cal_consumed(supabase:Client,user_id: str, today_date: str) -> int:
     try:
         calories_data = (
             supabase.table("Daily")
@@ -45,7 +40,7 @@ def get_cal_consumed(user_id: str, today_date: str) -> int:
         print(f"Error in get_cal_consumed: {str(e)}")
         raise ValueError(f"Error fetching cal_consumed: {str(e)}")
 
-def ensure_daily_entry(user_id: str, today_date: str):
+def ensure_daily_entry(supabase:Client,user_id: str, today_date: str):
     try:
         response = supabase.table("Daily").select("*").eq("user_id", user_id).eq("date", today_date).execute()
         if not response.data:
@@ -61,10 +56,10 @@ def ensure_daily_entry(user_id: str, today_date: str):
     except Exception as e:
         raise ValueError(f"Error ensuring Daily entry: {str(e)}")
 
-def new_meal_insert(user_id, today_date, meal_cal, foods_detected):
+def new_meal_insert(supabase:Client,user_id, today_date, meal_cal, foods_detected):
     try:
         # Ensure Daily entry exists
-        ensure_daily_entry(user_id, today_date)
+        ensure_daily_entry(supabase,user_id, today_date)
 
         # Insert into Meals
         response = supabase.table("Meals").insert({
@@ -75,8 +70,10 @@ def new_meal_insert(user_id, today_date, meal_cal, foods_detected):
             "foods_detected": foods_detected
         }).execute()
 
+        print(f"Response from Meals insert: {response}")
+
         # Update cal_consumed in Daily
-        if response.status_code == 201:  # Ensure Meals insert succeeded
+        if response: # Ensure Meals insert succeeded
             daily_data = (
                 supabase.table("Daily")
                 .select("cal_consumed")
@@ -99,7 +96,7 @@ def new_meal_insert(user_id, today_date, meal_cal, foods_detected):
         raise ValueError(f"Error inserting new meal: {str(e)}")
 
     
-def get_user_data(user_id: str) -> dict:
+def get_user_data(supabase:Client,user_id: str) -> dict:
 
     try:
         response = (
@@ -113,7 +110,22 @@ def get_user_data(user_id: str) -> dict:
     except Exception as e:
         raise ValueError(f"Error fetching user data: {str(e)}")
 
-if __name__ == "__main__":
-    user_id = "010a84c8-1293-41f6-bd12-c3be9e3aae5f"
-    date = "2024-12-21"
-    print(get_user_data(user_id))
+def get_latest_daily_data(supabase:Client,user_id):
+    today = todays_date()
+    result = (
+        supabase.table("Daily")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("date", today)
+        .execute()
+    )
+    if result.data:
+        return result.data[0]  # Return the first record (there should only be one)
+    else:
+        # If no record for today, return default data
+        return {
+            "cal_consumed": 0,
+            "cal_burnt": 0,
+            "steps": 0,
+            "distance": 0.0,
+        }
