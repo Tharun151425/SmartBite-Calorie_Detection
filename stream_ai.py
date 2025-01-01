@@ -559,6 +559,9 @@ def home_page():
             st.session_state.quantity_unit = unit
 
             latest = st.session_state.history[-1]
+
+            total_meal_calories_servings=0
+            total_meal_calories_grams=0
             
             for food in latest["foods"]:
                 # Define the confidence color
@@ -581,22 +584,26 @@ def home_page():
                         # Display calculated calories
                         st.markdown(
                             f"""
-                            <div style="color: #00ccff; font-size: 0.9em;">
+                            <div style="color: #00ccff; font-size: 1.1em;">
                                 Calories: {food['calories_servings']:.2f} kcal
+                                <br>
+                                Servings: {food['portion']}
                             </div>
                             """,
                             unsafe_allow_html=True,
                         )
+                    
+                        total_meal_calories_servings+=food['calories_servings']
                     elif unit == "Grams":
                         # Display calculated calories
                         food_grams=st.number_input("Enter the grams of the food:",value=100,key=food['food'])
                         food_per_gram=food['calories_grams']
                         if 'calories_grams_updated' not in food:
                             food['calories_grams_updated']=int(food_grams*food_per_gram)
-                            latest['meal_calories']=food['calories_grams_updated']
+                            total_meal_calories_grams+=food['calories_grams_updated']
                         else:
                             food['calories_grams_updated']=int(food_grams*food_per_gram)
-                            latest['meal_calories']=food['calories_grams_updated']
+                            total_meal_calories_grams+=food['calories_grams_updated']
 
                         st.markdown(
                             f"""
@@ -606,7 +613,10 @@ def home_page():
                             """,
                             unsafe_allow_html=True,
                         )
-                    
+            if unit == "Servings":
+                latest["meal_calories"]=total_meal_calories_servings
+            elif unit == "Grams":
+                latest["meal_calories"]=total_meal_calories_grams
 
             if st.button("📥 Save Meal", key="save_meal"):
                 try:
@@ -908,8 +918,7 @@ def main():
             home_page()
         elif st.session_state['page'] == 'fitbit':
             fitbit_page()
-        # st.session_state['page'] = 'home'
-        # home_page()
+ 
 
 
 if __name__ == '__main__':
