@@ -8,7 +8,7 @@ def food_detect(input_image_path):
     model = YOLO('last.pt')  # Ensure the path to your best.pt is correct
 
     # Run inference on the image
-    results = model(input_image_path,conf=0.8)
+    results = model(input_image_path,conf=0.5)
 
     # Extract the base name of the input image
     input_filename = os.path.basename(input_image_path)
