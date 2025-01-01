@@ -497,7 +497,10 @@ def home_page():
                         st.success("✨ Analysis Complete!")
                         # st.image(output_image, caption="Output Image", use_container_width=True)
                         os.remove(temp_image_path)
-                        st.session_state.show_save_button = True  # Show save button after successful analysis
+                        if result:
+                            st.session_state.show_save_button = True  # Show save button after successful analysis
+                        else:
+                            st.warning("No food items detected in the image.")
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
                         st.session_state.show_save_button = False
@@ -520,7 +523,7 @@ def home_page():
             daily_goal = st.session_state.daily_goal
             remaining = daily_goal - latest["cal_consumed"]
             if remaining < 0:
-                create_metric_card("Extra Calories Today", abs(remaining), suffix=" kcal")
+                create_metric_card("Extra Calories Today", f"{abs(remaining):.2f}", suffix=" kcal")
             else:
                 create_metric_card("Remaining Today", remaining, suffix=" kcal")
 
