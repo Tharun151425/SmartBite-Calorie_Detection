@@ -34,8 +34,8 @@ def food_detect(input_image_path):
 
             if food_name in food_counts:
                 food_counts[food_name]['count'] += 1
-                if confidence<0.8:
-                    continue
+                #if confidence<0.8:
+                    #continue
                 food_counts[food_name]['confidences'].append(confidence)
             else:
                 food_counts[food_name] = {
