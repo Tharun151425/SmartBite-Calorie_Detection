@@ -5,7 +5,7 @@ from PIL import Image
 
 def food_detect(input_image_path):
     # Load the model
-    model = YOLO('best.pt')  # Ensure the path to your best.pt is correct
+    model = YOLO('last.pt')  # Ensure the path to your best.pt is correct
 
     # Run inference on the image
     results = model(input_image_path,conf=0.8)
