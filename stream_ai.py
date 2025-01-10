@@ -539,11 +539,11 @@ def home_page():
             if access_token:
                 dist = dist_covered(access_token)
                 if dist:
-                    dist = round(dist_covered(access_token), 4)
+                    dist = round(dist_covered(access_token), 2)
                     if dist < 1:
-                        create_metric_card("Distance Covered", (dist*1000), suffix=" m")
+                        create_metric_card("Distance Covered", round(dist*1000,2), suffix=" m")
                     else:
-                        create_metric_card("Distance Covered", (dist), suffix=" km")
+                        create_metric_card("Distance Covered", round(dist,2), suffix=" km")
         with coly3:
             if access_token:
                 steps = steps_covered(access_token)
