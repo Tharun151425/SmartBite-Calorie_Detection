@@ -19,17 +19,17 @@ SmartBite AI is a machine learning-powered application that detects food from im
 
 ## 📸 Screenshots
 ### Login Page :
-![Login Page](public\1.jpg)    
+![Login Page](public/1.jpg)    
 ### Food Detection with Calorie Estimation :
-![Food Detection with Calories](public\2.jpg)  
+![Food Detection with Calories](public/2.jpg)  
 ### Analytics Dashboard :
-![Analytics Dashboard](public\3.jpg)  
+![Analytics Dashboard](public/3.jpg)  
 ### Analysis History :
-![Analysis History](public\3.5.jpg)  
+![Analysis History](public/3.5.jpg)  
 ### Fitbit Access token :
-![Fitbit Access token](public\4.jpg)
+![Fitbit Access token](public/4.jpg)
 ### Fitbit Data Integration :
-![Fitbit Data Integration](public\5.jpg)  
+![Fitbit Data Integration](public/5.jpg)  
 
 
 ## 📖 Installation & Usage
