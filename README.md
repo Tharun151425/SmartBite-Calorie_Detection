@@ -1,10 +1,7 @@
 # 🍽️ SmartBite AI - Food Recognition & Calorie Estimation
 
 ## 📌 Project Overview
-SmartBite AI is a machine learning-powered application that detects food from images and estimates calorie content, helping users track their nutritional intake. It provides user authentication, stores consumption history, and integrates real-time fitness data for a personalized experience.
-
-![SmartBite Logo](IMAGE_PATH)  
-*Replace IMAGE_PATH with the actual image path*
+SmartBite AI is a machine learning-powered application that detects food from images and estimates calorie content, helping users track their nutritional intake. It provides user authentication, stores consumption history, and integrates real-time fitness data for a personalized experience. 
 
 ## 🚀 Features
 ✅ Food recognition using machine learning  
@@ -21,11 +18,19 @@ SmartBite AI is a machine learning-powered application that detects food from im
 - **API Integration**: Fitness data from wearable devices  
 
 ## 📸 Screenshots
-![Food Detection](IMAGE_PATH)  
-*Replace IMAGE_PATH with a screenshot of food detection*  
+### Login Page :
+![Login Page](public\1.jpg)    
+### Food Detection with Calorie Estimation :
+![Food Detection with Calories](public\2.jpg)  
+### Analytics Dashboard :
+![Analytics Dashboard](public\3.jpg)  
+### Analysis History :
+![Analysis History](public\3.5.jpg)  
+### Fitbit Access token :
+![Fitbit Access token](public\4.jpg)
+### Fitbit Data Integration :
+![Fitbit Data Integration](public\5.jpg)  
 
-![User Dashboard](IMAGE_PATH)  
-*Replace IMAGE_PATH with a screenshot of the dashboard*
 
 ## 📖 Installation & Usage
 ```bash
